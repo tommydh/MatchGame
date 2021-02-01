@@ -19,13 +19,14 @@ namespace MatchGame
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+
+public partial class MainWindow : Window
     {
         DispatcherTimer timer = new DispatcherTimer();
         int tenthsOfSecondsElapsed;
         int matchesFound;
 
-        public MainWindow()
+    public MainWindow()
         {
             InitializeComponent();
             timer.Interval = TimeSpan.FromSeconds(.1);
@@ -36,12 +37,19 @@ namespace MatchGame
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+            string userName = usernameTextBox.Text;
             tenthsOfSecondsElapsed++;
             timeTextBlock.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
             if (matchesFound == 8)
             {
                 timer.Stop();
-                timeTextBlock.Text = timeTextBlock.Text + " - Play again?";
+                timeTextBlock.Text = timeTextBlock.Text + " - Play again, " + userName + "?";
+            }
+            if (timeTextBlock.Text == "10.0s")
+            {
+                timer.Stop();
+                timeTextBlock.Text = timeTextBlock.Text + " - You lose, " + userName + "!";
+                SetUpGame();
             }
         }
 
@@ -63,7 +71,7 @@ namespace MatchGame
 
             foreach (TextBlock textBlock in mainGrid.Children.OfType<TextBlock>())
             {
-                if (textBlock.Name != "timeTextBlock")
+                if (textBlock.Name != "timeTextBlock" && textBlock.Name != "usernameTextBlock")
                 {
                     textBlock.Visibility = Visibility.Visible;
                     int index = random.Next(animalEmoji.Count);
@@ -72,9 +80,9 @@ namespace MatchGame
                     animalEmoji.RemoveAt(index);
                 }
             }
-            timer.Start();
-            tenthsOfSecondsElapsed = 0;
-            matchesFound = 0;
+            
+            
+            
         }
 
         TextBlock lastTextBlockClicked;
@@ -106,6 +114,19 @@ namespace MatchGame
             if (matchesFound == 8)
             {
                 SetUpGame();
+            }
+        }
+
+        private void usernameTextBox_PreviewKeyDown_1(object sender, KeyEventArgs e)
+        {
+            string userName = usernameTextBox.Text;
+            if (e.Key == Key.Enter)
+            {
+                usernameTextBlock.Text = userName;
+                SetUpGame();
+                timer.Start();
+                tenthsOfSecondsElapsed = 0;
+                matchesFound = 0;
             }
         }
     }
