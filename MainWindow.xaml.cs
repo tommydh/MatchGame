@@ -26,7 +26,7 @@ public partial class MainWindow : Window
         int tenthsOfSecondsElapsed;
         int matchesFound;
 
-    public MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
             timer.Interval = TimeSpan.FromSeconds(.1);
@@ -35,6 +35,7 @@ public partial class MainWindow : Window
 
         }
 
+        bool lostGame = false;
         private void Timer_Tick(object sender, EventArgs e)
         {
             string userName = usernameTextBox.Text;
@@ -49,6 +50,7 @@ public partial class MainWindow : Window
             {
                 timer.Stop();
                 timeTextBlock.Text = timeTextBlock.Text + " - You lose, " + userName + "!";
+                lostGame = true;
                 SetUpGame();
             }
         }
@@ -89,23 +91,27 @@ public partial class MainWindow : Window
         bool findingMatch = false;
         private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TextBlock textBlock = sender as TextBlock;
-            if (findingMatch == false)
+            
+            if (usernameTextBlock.Text !="" && lostGame != true)
             {
-                textBlock.Visibility = Visibility.Hidden;
-                lastTextBlockClicked = textBlock;
-                findingMatch = true;
-            }
-            else if (textBlock.Text == lastTextBlockClicked.Text)
-            {
-                matchesFound++;
-                textBlock.Visibility = Visibility.Hidden;
-                findingMatch = false;
-            }
-            else
-            {
-                lastTextBlockClicked.Visibility = Visibility.Visible;
-                findingMatch = false;
+                TextBlock textBlock = sender as TextBlock;
+                if (findingMatch == false)
+                {
+                    textBlock.Visibility = Visibility.Hidden;
+                    lastTextBlockClicked = textBlock;
+                    findingMatch = true;
+                }
+                else if (textBlock.Text == lastTextBlockClicked.Text)
+                {
+                    matchesFound++;
+                    textBlock.Visibility = Visibility.Hidden;
+                    findingMatch = false;
+                }
+                else
+                {
+                    lastTextBlockClicked.Visibility = Visibility.Visible;
+                    findingMatch = false;
+                }
             }
         }
 
@@ -122,6 +128,7 @@ public partial class MainWindow : Window
             string userName = usernameTextBox.Text;
             if (e.Key == Key.Enter)
             {
+                lostGame = false;
                 usernameTextBlock.Text = userName;
                 SetUpGame();
                 timer.Start();
